@@ -1,0 +1,51 @@
+div#containerMain {
+  margin-top: 50px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+div#containerMain label {
+  display: block;
+  color: rgb(251, 176, 0);
+  margin-bottom: 10px
+}
+
+div#containerMain button {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border: none;
+  padding: 5px;
+  width: 100%;
+  margin-top: 30px;
+  background: rgb(251, 176, 0);
+  border-radius: 0.8rem;
+  color: black;
+  font-weight: bold;
+  text-decoration: none;
+  text-align: center;
+}
+
+div#containerMain button:hover {
+  background: rgb(248, 121, 1);
+  cursor: pointer
+}
+
+div#containerMain input {
+background: rgb(255, 205, 113);
+border: none;
+border-radius: 0.5rem;
+font-size: 1.5rem;
+text-align: center;
+transition: all 0.2s;
+margin-bottom: 10px;
+height: 60px
+}
+
+div#containerMain input:hover {
+  background: rgb(205, 245, 205);
+  height: 70px;
+  font-size: 1.5rem
+  }
