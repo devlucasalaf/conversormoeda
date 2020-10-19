@@ -70,7 +70,7 @@ const Main = () => {
   const onSubmit = values => {
     setEffect(true)
     setTimeout(() => {
-      window.location.href = `http://localhost:3000/result/cotacao=${state.cotacao}&quantidade=${state.quantidade}`
+      window.location.href = `https://conversormoeda.devlucasalaf.vercel.app/result/cotacao=${state.cotacao}&quantidade=${state.quantidade}`
     }, 3000)
   }
 
