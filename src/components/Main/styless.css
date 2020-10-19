@@ -9,7 +9,8 @@ div#containerMain {
 div#containerMain label {
   display: block;
   color: rgb(251, 176, 0);
-  margin-bottom: 10px
+  margin-bottom: 10px;
+  margin-top: 10px
 }
 
 div#containerMain button {
@@ -48,4 +49,10 @@ div#containerMain input:hover {
   background: rgb(205, 245, 205);
   height: 70px;
   font-size: 1.5rem
+  }
+
+  .errorMessage {
+    color: rgb(248, 74, 74);
+    font-size: 15px;
+    font-weight: 100;
   }

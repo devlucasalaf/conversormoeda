@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import './styless.css'
-import { Link } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import Header from '../Header'
 
 const Main = () => {
   const [state, setState] = useState({
     cotacao: '',
     quantidade: ''
   })
+
+  const [effect, setEffect] = useState(false)
 
   const coletar = (evt) => {
     const valores = evt.target.value
@@ -44,12 +47,12 @@ const Main = () => {
       if (res.data.value[0] !== undefined) {
         setState(old => ({
           ...old,
-          cotacao: res.data.value[0].cotacaoVenda
+          cotacao: parseFloat(res.data.value[0].cotacaoVenda).toFixed(2)
         }))
       } else if (res2.data.value[0] !== undefined) {
         setState(old => ({
           ...old,
-          cotacao: res2.data.value[0].cotacaoVenda
+          cotacao: parseFloat(res2.data.value[0].cotacaoVenda).toFixed(2)
         }))
       } else {
         setState(old => ({
@@ -63,16 +66,42 @@ const Main = () => {
     Run()
   }, [])
 
+  const { handleSubmit, register, errors } = useForm();
+  const onSubmit = values => {
+    setEffect(true)
+    setTimeout(() => {
+      window.location.href = `http://localhost:3000/result/cotacao=${state.cotacao}&quantidade=${state.quantidade}`
+    }, 3000)
+  }
+
+
   return (
-    <div id='containerMain'>
-      <form action={`/result`}>
-        <label>Cotação dólar:</label>
-        <input required name='cotacao' type='number' placeholder='cotação do dólar' onChange={coletar} value={state.cotacao}></input>
-        <span>{state.errorCot}</span>
-        <label>Quantidade de dólar:</label>
-        <input required name='quantidade' type='number' placeholder='quantidade de dólar(es)' onChange={coletar} value={state.quantidade}></input>
-        <button type='submit'>Calcular</button>
-      </form>
+    <div>
+      <Header effect={effect} />
+      <div id='containerMain'>
+        <form onSubmit={handleSubmit(onSubmit)} action={`/result`}>
+          <label>Cotação dólar:</label>
+          <input ref={register({
+            required: "Este valor é de preenchimento obrigatório.",
+            pattern: {
+              message: "Este valor é de preenchimento obrigatório."
+            }
+          })} id='cotacao' name='cotacao' placeholder='R$ 0,00' type='number' onChange={coletar} value={state.cotacao}>
+          </input>
+          <br />
+          <span className='errorMessage'>{errors.cotacao && errors.cotacao.message}</span>
+          <label>Quantidade de dólar:</label>
+          <input ref={register({
+            required: "Este valor é de preenchimento obrigatório.",
+            pattern: {
+              message: "Este valor é de preenchimento obrigatório."
+            }
+          })} id='quantidade' name='quantidade' type='number' placeholder='quantidade de dólar(es)' onChange={coletar} value={state.quantidade}></input>
+          <br />
+          <span className='errorMessage'>{errors.quantidade && errors.quantidade.message}</span>
+          <button type='submit'>Calcular</button>
+        </form>
+      </div>
     </div>
   )
 }

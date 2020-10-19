@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import Main from './components/Main'
 import Result from './components/Result'
 
+
 const Routes = () => {
   return (
     <BrowserRouter>
