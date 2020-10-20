@@ -7,7 +7,8 @@ import Header from '../Header'
 const Main = () => {
   const [state, setState] = useState({
     cotacao: '',
-    quantidade: ''
+    quantidade: '',
+    dataCotacacao: ''
   })
 
   const [effect, setEffect] = useState(false)
@@ -21,49 +22,49 @@ const Main = () => {
     }))
   }
 
-  const getToday = () => {
-    const today = new Date()
-    const hoje = (today.getMonth() + 1) + '-' + today.getDate() + '-' + today.getFullYear()
-    return hoje
-  }
-
-  const getYesterday = () => {
-    const yesterday = new Date()
-    const ontem = (yesterday.getMonth() + 1) + '-' + (yesterday.getDate() - 1) + '-' + yesterday.getFullYear()
-    return ontem
+  const getData = (decrement) => {
+    const date = new Date()
+    const dateFormated = (date.getMonth() + 1) + '-' + (date.getDate() - decrement) + '-' + date.getFullYear()
+    return dateFormated
   }
 
   useEffect(() => {
-    async function Run() {
-      const datas = getToday()
-      const api = await axios.create({ baseURL: `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=%27${datas}%27&$top=100&$format=json&$select=cotacaoCompra,cotacaoVenda,dataHoraCotacao` })
-      const res = await api.get('')
-
-
-      const datas2 = getYesterday()
-      const api2 = await axios.create({ baseURL: `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=%27${datas2}%27&$top=100&$format=json&$select=cotacaoCompra,cotacaoVenda,dataHoraCotacao` })
-      const res2 = await api2.get('')
+    let dayDecrement = 0
+    async function Run(dayDecrement) {
+      let data = getData(dayDecrement)
+      let api = await axios.create({ baseURL: `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=%27${data}%27&$top=100&$format=json&$select=cotacaoCompra,cotacaoVenda,dataHoraCotacao` })
+      let res = await api.get('')
 
       if (res.data.value[0] !== undefined) {
         setState(old => ({
           ...old,
-          cotacao: parseFloat(res.data.value[0].cotacaoVenda).toFixed(2)
-        }))
-      } else if (res2.data.value[0] !== undefined) {
-        setState(old => ({
-          ...old,
-          cotacao: parseFloat(res2.data.value[0].cotacaoVenda).toFixed(2)
+          cotacao: parseFloat(res.data.value[0].cotacaoVenda).toFixed(2),
+          dataCotacacao: data
         }))
       } else {
-        setState(old => ({
-          ...old,
-          cotacao: ''
-        }))
+        while (res.data.value[0] === undefined) {
+          dayDecrement++
+          data = getData(dayDecrement)
+          api = await axios.create({ baseURL: `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=%27${data}%27&$top=100&$format=json&$select=cotacaoCompra,cotacaoVenda,dataHoraCotacao` })
+          res = await api.get('')
+
+          if (res.data.value[0] !== undefined) {
+            setState(old => ({
+              ...old,
+              cotacao: parseFloat(res.data.value[0].cotacaoVenda).toFixed(2),
+              dataCotacacao: data
+            }))
+          } else {
+            setState(old => ({
+              ...old,
+              cotacao: ''
+            }))
+          }
+        }
       }
-
     }
-
-    Run()
+    console.log(state.cotacao)
+    Run(dayDecrement)
   }, [])
 
   const { handleSubmit, register, errors } = useForm();
@@ -75,11 +76,13 @@ const Main = () => {
   }
 
 
+
   return (
     <div>
       <Header effect={effect} />
       <div id='containerMain'>
         <form onSubmit={handleSubmit(onSubmit)} action={`/result`}>
+          <p style={{ color: 'white' }}>Data da Cotação: {state.dataCotacacao === '' ? 'carregando...' : state.dataCotacacao}</p>
           <label>Cotação dólar:</label>
           <input ref={register({
             required: "Este valor é de preenchimento obrigatório.",

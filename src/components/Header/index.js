@@ -2,7 +2,7 @@ import React from 'react'
 import './styless.css'
 
 const Header = ({ effect }) => {
-  console.log(effect)
+
   return (
     <div id='containerHeader'>
       <div className={effect === true ? 'animatedDiv' : 'circleDiv'}></div>
